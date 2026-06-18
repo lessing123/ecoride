@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "EcoRide",
+    "slug": "ecoride",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ecoride.app"
+    },
+    "android": {
+      "package": "com.ecoride.app"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+node_modules/
+.expo/
+dist/
+web-build/
+.expo-shared/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Android / iOS build artifacts
+android/
+ios/
+
+# Environment variables (ne jamais commit les secrets)
+.env
+.env.local
+.env.production
