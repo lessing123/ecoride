@@ -15,6 +15,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { logout } from '../services/authService';
 import { db } from '../config/firebase';
 import StarRating from '../components/StarRating';
+import { seedDatabase } from '../utils/seedData';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOW } from '../theme';
 
 const CO2_FACTOR = 0.021;
@@ -26,6 +27,7 @@ export default function ProfileScreen() {
   const [prenom, setPrenom] = useState(userProfile?.prenom || '');
   const [saving, setSaving] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [seeding, setSeeding] = useState(false);
 
   const co2Saved = ((userProfile?.kmTotal || 0) * CO2_FACTOR).toFixed(1);
   const initials = `${userProfile?.prenom?.charAt(0) || ''}${userProfile?.nom?.charAt(0) || ''}`.toUpperCase() || '?';
@@ -48,6 +50,19 @@ export default function ProfileScreen() {
       Alert.alert('Erreur', 'Impossible de sauvegarder les modifications.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSeed = async () => {
+    setSeeding(true);
+    try {
+      const nom = `${userProfile?.prenom || ''} ${userProfile?.nom || ''}`.trim();
+      const count = await seedDatabase(user.uid, nom || 'Moi');
+      Alert.alert('✅ Données injectées', `${count} trajets créés avec succès dans Firestore.`);
+    } catch (e) {
+      Alert.alert('Erreur', e.message);
+    } finally {
+      setSeeding(false);
     }
   };
 
@@ -196,6 +211,23 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {/* Seed démo */}
+        <TouchableOpacity
+          style={[styles.seedBtn, seeding && styles.btnDisabled]}
+          onPress={handleSeed}
+          disabled={seeding}
+          activeOpacity={0.85}
+        >
+          {seeding ? (
+            <ActivityIndicator color={COLORS.primary} />
+          ) : (
+            <>
+              <Ionicons name="leaf-outline" size={20} color={COLORS.primary} />
+              <Text style={styles.seedText}>Peupler les données démo</Text>
+            </>
+          )}
+        </TouchableOpacity>
+
         {/* Logout */}
         <TouchableOpacity
           style={[styles.logoutBtn, loggingOut && styles.logoutBtnDisabled]}
@@ -331,6 +363,20 @@ const styles = StyleSheet.create({
   infoContent: { flex: 1 },
   infoLabel: { fontSize: FONTS.sizes.xs, color: COLORS.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5 },
   infoValue: { fontSize: FONTS.sizes.base, color: COLORS.text, fontWeight: '500', marginTop: 2 },
+  seedBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACING.sm,
+    backgroundColor: COLORS.cardGreen,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.base,
+    marginTop: SPACING.sm,
+    borderWidth: 1.5,
+    borderColor: COLORS.borderGreen,
+  },
+  seedText: { color: COLORS.primary, fontWeight: '700', fontSize: FONTS.sizes.base },
+  btnDisabled: { opacity: 0.5 },
   logoutBtn: {
     flexDirection: 'row',
     alignItems: 'center',
