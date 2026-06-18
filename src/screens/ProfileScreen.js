@@ -51,27 +51,14 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Déconnexion',
-      'Voulez-vous vraiment vous déconnecter ?',
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Se déconnecter',
-          style: 'destructive',
-          onPress: async () => {
-            setLoggingOut(true);
-            try {
-              await logout();
-            } catch {
-              Alert.alert('Erreur', 'Impossible de se déconnecter.');
-              setLoggingOut(false);
-            }
-          },
-        },
-      ]
-    );
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+    } catch (e) {
+      Alert.alert('Erreur', 'Impossible de se déconnecter : ' + e.message);
+      setLoggingOut(false);
+    }
   };
 
   const cancelEdit = () => {
